@@ -15,8 +15,6 @@ function App() {
   const [currentData, setCurrentData] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [hasMontante, setHasMontante] = useState(false);
-
   const pageSize = 500;
 
   async function filterPage(formData) {
@@ -34,7 +32,6 @@ function App() {
     }
 
     if (formData.montante === "") {
-      setHasMontante(false);
       for (let atoMeta of data.list) {
         setAtos((prevAtos) => [
           ...prevAtos,
@@ -43,16 +40,10 @@ function App() {
             humanId: atoMeta.humanId,
             entidades: atoMeta.entidades,
             sumario: atoMeta.sumario,
-            // autoria: ato.autoria,
-            // descricaoPublicacao: ato.descricaoPublicacao,
-            // considerandos: ato.considerandos,
-            // dataPorExtenso: ato.dataPorExtenso,
-            // montanteMax: max,
           },
         ]);
       }
     } else {
-      setHasMontante(true);
       for (let atoMeta of data.list) {
         const res = await fetch(buildAtoFetchUrl(atoMeta.id));
         const ato = await res.json();
@@ -120,7 +111,7 @@ function App() {
         {!firstRender && (
           <div className="container atos-container">
             {atos.map((ato) => (
-              <Ato key={ato.id} data={ato} hasMontante={hasMontante} />
+              <Ato key={ato.id} data={ato} />
             ))}
             {isLoading && (
               <div className="spinner-div">

@@ -1,6 +1,6 @@
 import { buildReturnUrl } from "../api/api";
 
-function Ato({ data, hasMontante }) {
+function Ato({ data }) {
   const url = buildReturnUrl(data.id);
 
   return (
@@ -10,7 +10,7 @@ function Ato({ data, hasMontante }) {
       <p>
         <strong>Sumário:</strong> {data.sumario}
       </p>
-      {hasMontante && (
+      {Object.hasOwn(data, "montanteMax") && (
         <p>
           Montante máximo mencionado: {data.montanteMax.toLocaleString("pt-PT")}
           €
