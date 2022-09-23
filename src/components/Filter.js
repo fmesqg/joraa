@@ -8,7 +8,8 @@ function Filter({ onSubmit, isLoading }) {
   const [formData, setFormData] = useState({
     fromDate: fromDate.toISOString().substring(0, 10),
     toDate: new Date().toISOString().substring(0, 10),
-    montante: 500000,
+    // montante: 500000,
+    montante: "",
     serie: "",
     entidade: "",
     tipo: "",
@@ -132,7 +133,7 @@ function Filter({ onSubmit, isLoading }) {
         </label>
         <input
           type="number"
-          step="100000"
+          // step="100000"
           min="0"
           max="9000000000"
           onChange={handleChange}
