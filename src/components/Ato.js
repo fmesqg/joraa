@@ -5,18 +5,17 @@ function Ato({ data }) {
 
   return (
     <div className="ato">
-      <p> {data.humanId} </p>
-      <p>{data.entidades.join("; ")}</p>
-      <p>
-        <strong>Sumário:</strong> {data.sumario}
-      </p>
+      <a href={url} target="_blank" className="ato__title">
+        {data.humanId}
+      </a>
+      <p className="ato__entidades">{data.entidades.join("; ")}</p>
+      <p className="ato__summary">{data.sumario}</p>
       {Object.hasOwn(data, "montanteMax") && (
-        <p>
-          Montante máximo mencionado: {data.montanteMax.toLocaleString("pt-PT")}
-          €
+        <p className="ato__montante">
+          {data.montanteMax.toLocaleString("pt-PT")}€
+          <span className="ato__tooltip">Montante máximo mencionado</span>
         </p>
       )}
-      <a href={url}>{url}</a>
     </div>
   );
 }

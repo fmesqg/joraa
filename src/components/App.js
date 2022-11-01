@@ -1,7 +1,7 @@
 import "./App.css";
-import Ato from "./components/Ato";
-import Filter from "./components/Filter";
-import { buildSearchQueryUrl, buildAtoFetchUrl } from "./api/api";
+import Ato from "./Ato";
+import Filter from "./Filter";
+import { buildSearchQueryUrl, buildAtoFetchUrl } from "../api/api";
 import { useState } from "react";
 import { SixDotsRotate } from "react-svg-spinners";
 
@@ -98,18 +98,20 @@ function App() {
   }
 
   return (
-    <div className="App">
+    <div>
       <header className="header">
-        <div className="container">
-          <h2 className="header--title">JORAA</h2>
+        <div className="header__container">
+          <h1 className="header__title"> JORAA </h1>
+          {/* <h1 className="header__title">Jornal Oficial</h1>
+          <h2 className="header__subtitle">Região Autónoma dos Açores</h2> */}
         </div>
       </header>
+
       <main className="main">
-        <div className="container filter-container">
-          <Filter onSubmit={filter} isLoading={isLoading} />
-        </div>
+        <Filter onSubmit={filter} isLoading={isLoading} />
+
         {!firstRender && (
-          <div className="container atos-container">
+          <div className="results">
             {atos.map((ato) => (
               <Ato key={ato.id} data={ato} />
             ))}
