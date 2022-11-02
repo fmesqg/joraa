@@ -2,7 +2,7 @@ import "./App.css";
 import Ato from "./Ato";
 import Filter from "./Filter";
 import { buildSearchQueryUrl, buildAtoFetchUrl } from "../api/api";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { SixDotsRotate } from "react-svg-spinners";
 
 function App() {
@@ -13,21 +13,21 @@ function App() {
   const [firstRender, setFirstRender] = useState(true);
 
   const [currentData, setCurrentData] = useState({});
-  const [currentPage, setCurrentPage] = useState(1);
 
+  const page = useRef(1);
   const pageSize = 500;
 
   async function filterPage(formData) {
     setIsLoading(true);
 
     const response = await fetch(
-      buildSearchQueryUrl(formData, currentPage, pageSize)
+      buildSearchQueryUrl(formData, page.current, pageSize)
     );
     const data = await response.json();
 
     if (data.resultSize === 0) {
       setIsLoading(false);
-      if (currentPage === 1) setNoResults(true);
+      if (page.current === 1) setNoResults(true);
       return;
     }
 
@@ -79,8 +79,8 @@ function App() {
 
     setIsLoading(false);
 
-    if (data.resultSize > currentPage * pageSize) {
-      setCurrentPage((prevPage) => prevPage + 1);
+    if (data.resultSize > page.current * pageSize) {
+      page.current++;
       setMoreResults(true);
     } else {
       setMoreResults(false);
@@ -93,7 +93,7 @@ function App() {
     setMoreResults(false);
     setFirstRender(false);
     setCurrentData({ ...formData });
-    setCurrentPage(1);
+    page.current = 1;
     filterPage(formData);
   }
 
