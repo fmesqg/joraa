@@ -8,7 +8,8 @@ function Filter({ onSubmit, isLoading }) {
   const [formData, setFormData] = useState({
     fromDate: fromDate.toISOString().substring(0, 10),
     toDate: new Date().toISOString().substring(0, 10),
-    montante: 500000,
+    // montante: 500000,
+    montante: "",
     serie: "",
     entidade: "",
     tipo: "",
@@ -19,6 +20,7 @@ function Filter({ onSubmit, isLoading }) {
   const [tiposList, setTiposList] = useState([]);
 
   useEffect(() => {
+    onSubmit(formData);
     fetch(seriesUrl)
       .then((response) => response.json())
       .then((data) => setSeriesList(data.seriesList));
@@ -43,10 +45,13 @@ function Filter({ onSubmit, isLoading }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="filter--form">
-      <div className="dates-container">
-        <div className="input-container">
-          <label className={formData.fromDate && "filled"} htmlFor="fromDate">
+    <form onSubmit={handleSubmit} className="filter">
+      <div className="filter__dates-container">
+        <div className="filter__input-container">
+          <label
+            className={"filter__label" && formData.fromDate && "filled"}
+            htmlFor="fromDate"
+          >
             De
           </label>
           <input
@@ -56,8 +61,11 @@ function Filter({ onSubmit, isLoading }) {
             value={formData.fromDate}
           />
         </div>
-        <div className="input-container">
-          <label className={formData.toDate && "filled"} htmlFor="toDate">
+        <div className="filter__input-container">
+          <label
+            className={"filter__label" && formData.toDate && "filled"}
+            htmlFor="toDate"
+          >
             Até
           </label>
           <input
@@ -69,8 +77,11 @@ function Filter({ onSubmit, isLoading }) {
         </div>
       </div>
 
-      <div className="input-container">
-        <label className={formData.serie && "filled"} htmlFor="serie">
+      <div className="filter__input-container">
+        <label
+          className={"filter__label" && formData.serie && "filled"}
+          htmlFor="serie"
+        >
           Série
         </label>
         <select
@@ -88,8 +99,11 @@ function Filter({ onSubmit, isLoading }) {
         </select>
       </div>
 
-      <div className="input-container">
-        <label className={formData.entidade && "filled"} htmlFor="entidade">
+      <div className="filter__input-container">
+        <label
+          className={"filter__label" && formData.entidade && "filled"}
+          htmlFor="entidade"
+        >
           Entidade
         </label>
         <select
@@ -107,8 +121,11 @@ function Filter({ onSubmit, isLoading }) {
         </select>
       </div>
 
-      <div className="input-container">
-        <label className={formData.tipo && "filled"} htmlFor="tipo">
+      <div className="filter__input-container">
+        <label
+          className={"filter__label" && formData.tipo && "filled"}
+          htmlFor="tipo"
+        >
           Tipo
         </label>
         <select
@@ -126,13 +143,16 @@ function Filter({ onSubmit, isLoading }) {
         </select>
       </div>
 
-      <div className="input-container">
-        <label className={formData.montante && "filled"} htmlFor="montante">
+      <div className="filter__input-container">
+        <label
+          className={"filter__label" && formData.montante && "filled"}
+          htmlFor="montante"
+        >
           Montante mínimo (€)
         </label>
         <input
           type="number"
-          step="100000"
+          // step="100000"
           min="0"
           max="9000000000"
           onChange={handleChange}
