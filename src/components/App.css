@@ -89,6 +89,7 @@ body {
   display: flex;
   position: relative;
   flex-direction: column;
+  width: 100%;
 }
 
 .filter__input-container label {
@@ -296,6 +297,9 @@ button:disabled:hover {
 @media (min-width: 465px) {
   .filter__dates-container {
     flex-direction: row;
+  }
+  .filter__input-container {
+    width: auto;
   }
 }
 
