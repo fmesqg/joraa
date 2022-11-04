@@ -20,6 +20,7 @@ function Filter({ onSubmit, isLoading }) {
   const [tiposList, setTiposList] = useState([]);
 
   useEffect(() => {
+    onSubmit(formData);
     fetch(seriesUrl)
       .then((response) => response.json())
       .then((data) => setSeriesList(data.seriesList));

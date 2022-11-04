@@ -112,8 +112,8 @@ function App() {
 
         {!firstRender && (
           <div className="results">
-            {atos.map((ato) => (
-              <Ato key={ato.id} data={ato} />
+            {atos.map((ato, index) => (
+              <Ato key={ato.id + index} data={ato} />
             ))}
             {isLoading && (
               <div className="spinner-div">
