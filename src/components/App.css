@@ -306,7 +306,7 @@ button:disabled:hover {
 
 @media (min-width: 925px) and (min-height: 500px) {
   .header__container {
-    width: 300px;
+    width: 250px;
     margin: 0;
     text-align: center;
   }
@@ -340,10 +340,16 @@ button:disabled:hover {
   .filter {
     width: 300px;
   }
+  .header__container {
+    width: 300px;
+  }
 }
 
 @media (min-width: 1300px) {
   .filter {
+    width: 400px;
+  }
+  .header__container {
     width: 400px;
   }
 
