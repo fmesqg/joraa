@@ -23,6 +23,16 @@ function App() {
     const response = await fetch(
       buildSearchQueryUrl(formData, page.current, pageSize)
     );
+    if (!response.ok) {
+      console.log(
+        "Error fetching data: ",
+        response.status,
+        response.statusText
+      );
+      setIsLoading(false);
+      setNoResults(true);
+      return;
+    }
     const data = await response.json();
 
     if (data.resultSize === 0) {
@@ -46,6 +56,10 @@ function App() {
     } else {
       for (let atoMeta of data.list) {
         const res = await fetch(buildAtoFetchUrl(atoMeta.id));
+        if (!res.ok) {
+          console.log("Error fetching data: ", res.status, res.statusText);
+          continue;
+        }
         const ato = await res.json();
 
         const matches = ato.considerandos.match(
