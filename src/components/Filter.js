@@ -22,13 +22,40 @@ function Filter({ onSubmit, isLoading }) {
   useEffect(() => {
     onSubmit(formData);
     fetch(seriesUrl)
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          console.log(
+            "Error fetching data: ",
+            response.status,
+            response.statusText
+          );
+        }
+        return response.json();
+      })
       .then((data) => setSeriesList(data.seriesList));
     fetch(entidadesUrl)
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          console.log(
+            "Error fetching data: ",
+            response.status,
+            response.statusText
+          );
+        }
+        return response.json();
+      })
       .then((data) => setEntidadesList(data.entidadesList));
     fetch(tiposUrl)
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          console.log(
+            "Error fetching data: ",
+            response.status,
+            response.statusText
+          );
+        }
+        return response.json();
+      })
       .then((data) => setTiposList(data.tiposAtoList));
   }, []);
 
