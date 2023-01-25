@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { seriesUrl, entidadesUrl, tiposUrl } from "../api/api";
 
-function Filter({ isLoading, filterData, setFilterData }) {
+function Filter({ isLoading, filterData, filter }) {
   const [formData, setFormData] = useState({ ...filterData });
   const [seriesList, setSeriesList] = useState([]);
   const [entidadesList, setEntidadesList] = useState([]);
   const [tiposList, setTiposList] = useState([]);
 
+  // fetch series, entidades and tipos on first render
   useEffect(() => {
     fetch(seriesUrl)
       .then((response) => {
@@ -55,7 +56,7 @@ function Filter({ isLoading, filterData, setFilterData }) {
 
   function handleSubmit(event) {
     event.preventDefault();
-    setFilterData({ ...formData });
+    filter(formData);
   }
 
   return (
@@ -175,6 +176,7 @@ function Filter({ isLoading, filterData, setFilterData }) {
         />
       </div>
 
+      {/* <button className="filter-btn"> */}
       <button className="filter-btn" disabled={isLoading}>
         Filtrar
       </button>

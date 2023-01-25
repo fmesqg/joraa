@@ -2,7 +2,7 @@ import "./App.css";
 import Ato from "./Ato";
 import Filter from "./Filter";
 import { buildSearchQueryUrl, buildAtoFetchUrl } from "../api/api";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { SixDotsRotate } from "react-svg-spinners";
 
 function App() {
@@ -21,107 +21,112 @@ function App() {
     entidade: "",
     tipo: "",
   });
-
-  const page = useRef(1);
+  const [page, setPage] = useState(1);
   const pageSize = 500;
 
-  const filterPage = useCallback(async () => {
-    setIsLoading(true);
-
-    const response = await fetch(
-      buildSearchQueryUrl(filterData, page.current, pageSize)
-    );
-    if (!response.ok) {
-      console.log(
-        "Error fetching data: ",
-        response.status,
-        response.statusText
-      );
-      setIsLoading(false);
-      setNoResults(true);
-      return;
-    }
-    const data = await response.json();
-
-    if (data.resultSize === 0) {
-      setIsLoading(false);
-      if (page.current === 1) setNoResults(true);
-      return;
-    }
-
-    if (filterData.montante === "") {
-      for (let atoMeta of data.list) {
-        setAtos((prevAtos) => [
-          ...prevAtos,
-          {
-            id: atoMeta.id,
-            humanId: atoMeta.humanId,
-            entidades: atoMeta.entidades,
-            sumario: atoMeta.sumario,
-          },
-        ]);
+  // filter page when filterData or page changes
+  useEffect(() => {
+    const filterPage = async () => {
+      if (page === 1) {
+        setAtos([]);
+        setNoResults(false);
+        setMoreResults(false);
+        setFirstRender(false);
       }
-    } else {
-      for (let atoMeta of data.list) {
-        const res = await fetch(buildAtoFetchUrl(atoMeta.id));
-        if (!res.ok) {
-          console.log("Error fetching data: ", res.status, res.statusText);
-          continue;
-        }
-        const ato = await res.json();
 
-        const matches = ato.considerandos.match(
-          /(\d{0,3})?(\.)?(\d{0,3})?(\.)?(\d{0,3})?(\.)?(\d{1,3})(,\d{2})€/g
+      setIsLoading(true);
+
+      // const abortController = useRef(new AbortController());
+      // const signal = abortController.current.signal;
+
+      const response = await fetch(
+        buildSearchQueryUrl(filterData, page, pageSize)
+      );
+      if (!response.ok) {
+        console.log(
+          "Error fetching data: ",
+          response.status,
+          response.statusText
         );
+        setIsLoading(false);
+        setNoResults(true);
+        return;
+      }
+      const data = await response.json();
 
-        if (matches) {
-          const max = matches
-            .map((s) => Number(s.split(",")[0].replaceAll(".", "")))
-            .reduce((a, b) => Math.max(a, b), -Infinity);
+      if (data.resultSize === 0) {
+        setIsLoading(false);
+        if (page === 1) setNoResults(true);
+        return;
+      }
 
-          if (max > filterData.montante) {
-            setAtos((prevAtos) => [
-              ...prevAtos,
-              {
-                id: ato.id,
-                humanId: ato.humanId,
-                entidades: ato.entidades.map((e) => e.nome),
-                sumario: ato.sumario,
-                montanteMax: max,
-                // autoria: ato.autoria,
-                // descricaoPublicacao: ato.descricaoPublicacao,
-                // considerandos: ato.considerandos,
-                // dataPorExtenso: ato.dataPorExtenso,
-              },
-            ]);
+      if (filterData.montante === "") {
+        for (let atoMeta of data.list) {
+          setAtos((prevAtos) => [
+            ...prevAtos,
+            {
+              id: atoMeta.id,
+              humanId: atoMeta.humanId,
+              entidades: atoMeta.entidades,
+              sumario: atoMeta.sumario,
+            },
+          ]);
+        }
+      } else {
+        for (let atoMeta of data.list) {
+          const res = await fetch(buildAtoFetchUrl(atoMeta.id));
+          if (!res.ok) {
+            console.log("Error fetching data: ", res.status, res.statusText);
+            continue;
+          }
+          const ato = await res.json();
+
+          const matches = ato.considerandos.match(
+            /(\d{0,3})?(\.)?(\d{0,3})?(\.)?(\d{0,3})?(\.)?(\d{1,3})(,\d{2})€/g
+          );
+
+          if (matches) {
+            const max = matches
+              .map((s) => Number(s.split(",")[0].replaceAll(".", "")))
+              .reduce((a, b) => Math.max(a, b), -Infinity);
+
+            if (max > filterData.montante) {
+              setAtos((prevAtos) => [
+                ...prevAtos,
+                {
+                  id: ato.id,
+                  humanId: ato.humanId,
+                  entidades: ato.entidades.map((e) => e.nome),
+                  sumario: ato.sumario,
+                  montanteMax: max,
+                  // autoria: ato.autoria,
+                  // descricaoPublicacao: ato.descricaoPublicacao,
+                  // considerandos: ato.considerandos,
+                  // dataPorExtenso: ato.dataPorExtenso,
+                },
+              ]);
+            }
           }
         }
       }
-    }
 
-    setIsLoading(false);
+      setIsLoading(false);
 
-    if (data.resultSize > page.current * pageSize) {
-      page.current++;
-      setMoreResults(true);
-    } else {
-      setMoreResults(false);
-    }
-  }, [filterData]);
+      if (data.resultSize > page * pageSize) {
+        // page.current++;
+        setMoreResults(true);
+      } else {
+        setMoreResults(false);
+      }
+    };
 
-  const filter = useCallback(async () => {
-    console.log("filter");
-    setAtos([]);
-    setNoResults(false);
-    setMoreResults(false);
-    setFirstRender(false);
-    page.current = 1;
     filterPage();
-  }, [filterPage]);
+  }, [filterData, page]);
 
-  useEffect(() => {
-    filter();
-  }, [filter]);
+  const filter = (formData) => {
+    setFilterData({ ...formData });
+    setPage(1);
+  };
 
   return (
     <div>
@@ -135,9 +140,9 @@ function App() {
 
       <main className="main">
         <Filter
-          isLoading={isLoading}
+          isLoading={isLoading} // TODO: remove
           filterData={filterData}
-          setFilterData={setFilterData}
+          filter={filter}
         />
 
         {!firstRender && (
@@ -154,7 +159,12 @@ function App() {
               <p className="noResults">Não foram encontrados resultados.</p>
             )}
             {moreResults && !isLoading && (
-              <button className="moreResults-btn" onClick={() => filterPage()}>
+              <button
+                className="moreResults-btn"
+                onClick={() => {
+                  setPage((prev) => prev + 1);
+                }}
+              >
                 Ver mais
               </button>
             )}
