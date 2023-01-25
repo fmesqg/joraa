@@ -2,26 +2,34 @@ import "./App.css";
 import Ato from "./Ato";
 import Filter from "./Filter";
 import { buildSearchQueryUrl, buildAtoFetchUrl } from "../api/api";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { SixDotsRotate } from "react-svg-spinners";
 
 function App() {
+  const date = new Date();
+  date.setMonth(date.getMonth() - 3);
   const [atos, setAtos] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [noResults, setNoResults] = useState(false);
   const [moreResults, setMoreResults] = useState(false);
   const [firstRender, setFirstRender] = useState(true);
-
-  const [currentData, setCurrentData] = useState({});
+  const [filterData, setFilterData] = useState({
+    fromDate: date.toISOString().substring(0, 10),
+    toDate: new Date().toISOString().substring(0, 10),
+    montante: "",
+    serie: "",
+    entidade: "",
+    tipo: "",
+  });
 
   const page = useRef(1);
   const pageSize = 500;
 
-  async function filterPage(formData) {
+  const filterPage = useCallback(async () => {
     setIsLoading(true);
 
     const response = await fetch(
-      buildSearchQueryUrl(formData, page.current, pageSize)
+      buildSearchQueryUrl(filterData, page.current, pageSize)
     );
     if (!response.ok) {
       console.log(
@@ -41,7 +49,7 @@ function App() {
       return;
     }
 
-    if (formData.montante === "") {
+    if (filterData.montante === "") {
       for (let atoMeta of data.list) {
         setAtos((prevAtos) => [
           ...prevAtos,
@@ -71,7 +79,7 @@ function App() {
             .map((s) => Number(s.split(",")[0].replaceAll(".", "")))
             .reduce((a, b) => Math.max(a, b), -Infinity);
 
-          if (max > formData.montante) {
+          if (max > filterData.montante) {
             setAtos((prevAtos) => [
               ...prevAtos,
               {
@@ -99,17 +107,21 @@ function App() {
     } else {
       setMoreResults(false);
     }
-  }
+  }, [filterData]);
 
-  async function filter(formData) {
+  const filter = useCallback(async () => {
+    console.log("filter");
     setAtos([]);
     setNoResults(false);
     setMoreResults(false);
     setFirstRender(false);
-    setCurrentData({ ...formData });
     page.current = 1;
-    filterPage(formData);
-  }
+    filterPage();
+  }, [filterPage]);
+
+  useEffect(() => {
+    filter();
+  }, [filter]);
 
   return (
     <div>
@@ -122,7 +134,11 @@ function App() {
       </header>
 
       <main className="main">
-        <Filter onSubmit={filter} isLoading={isLoading} />
+        <Filter
+          isLoading={isLoading}
+          filterData={filterData}
+          setFilterData={setFilterData}
+        />
 
         {!firstRender && (
           <div className="results">
@@ -138,10 +154,7 @@ function App() {
               <p className="noResults">Não foram encontrados resultados.</p>
             )}
             {moreResults && !isLoading && (
-              <button
-                className="moreResults-btn"
-                onClick={() => filterPage(currentData)}
-              >
+              <button className="moreResults-btn" onClick={() => filterPage()}>
                 Ver mais
               </button>
             )}

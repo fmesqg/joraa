@@ -1,26 +1,13 @@
 import { useState, useEffect } from "react";
 import { seriesUrl, entidadesUrl, tiposUrl } from "../api/api";
 
-function Filter({ onSubmit, isLoading }) {
-  const fromDate = new Date();
-  fromDate.setMonth(fromDate.getMonth() - 3);
-
-  const [formData, setFormData] = useState({
-    fromDate: fromDate.toISOString().substring(0, 10),
-    toDate: new Date().toISOString().substring(0, 10),
-    // montante: 500000,
-    montante: "",
-    serie: "",
-    entidade: "",
-    tipo: "",
-  });
-
+function Filter({ isLoading, filterData, setFilterData }) {
+  const [formData, setFormData] = useState({ ...filterData });
   const [seriesList, setSeriesList] = useState([]);
   const [entidadesList, setEntidadesList] = useState([]);
   const [tiposList, setTiposList] = useState([]);
 
   useEffect(() => {
-    onSubmit(formData);
     fetch(seriesUrl)
       .then((response) => {
         if (!response.ok) {
@@ -68,7 +55,7 @@ function Filter({ onSubmit, isLoading }) {
 
   function handleSubmit(event) {
     event.preventDefault();
-    onSubmit(formData);
+    setFilterData({ ...formData });
   }
 
   return (
