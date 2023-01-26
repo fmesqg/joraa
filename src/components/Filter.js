@@ -167,13 +167,30 @@ function Filter({ filterData, filter }) {
         </label>
         <input
           type="number"
-          // step="100000"
           min="0"
           max="9000000000"
           onChange={handleChange}
           name="montante"
           value={formData.montante}
         />
+      </div>
+
+      <div className="filter__input-container">
+        <label
+          className={"filter__label" && formData.ordenacao && "filled"}
+          htmlFor="ordenacao"
+        >
+          Ordenar por:
+        </label>
+        <select
+          id="ordenacao"
+          value={formData.ordenacao}
+          onChange={handleChange}
+          name="ordenacao"
+        >
+          <option value="1">mais recente</option>
+          <option value="2">mais antigo</option>
+        </select>
       </div>
 
       <button className="filter-btn">Filtrar</button>

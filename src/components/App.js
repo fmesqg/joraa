@@ -19,6 +19,7 @@ function App() {
     serie: "",
     entidade: "",
     tipo: "",
+    ordenacao: 1,
   });
   const [page, setPage] = useState(1);
   const pageSize = 500;
