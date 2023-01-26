@@ -254,15 +254,6 @@ button:active {
   box-shadow: none;
 }
 
-button:disabled,
-button:disabled:hover {
-  background-color: #363f59;
-  -moz-box-shadow: none;
-  -webkit-box-shadow: none;
-  box-shadow: none;
-  cursor: wait;
-}
-
 .filter-btn {
   width: 100%;
   margin: 0.75em auto;

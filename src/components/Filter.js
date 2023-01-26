@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { seriesUrl, entidadesUrl, tiposUrl } from "../api/api";
 
-function Filter({ isLoading, filterData, filter }) {
+function Filter({ filterData, filter }) {
   const [formData, setFormData] = useState({ ...filterData });
   const [seriesList, setSeriesList] = useState([]);
   const [entidadesList, setEntidadesList] = useState([]);
@@ -176,10 +176,7 @@ function Filter({ isLoading, filterData, filter }) {
         />
       </div>
 
-      {/* <button className="filter-btn"> */}
-      <button className="filter-btn" disabled={isLoading}>
-        Filtrar
-      </button>
+      <button className="filter-btn">Filtrar</button>
     </form>
   );
 }

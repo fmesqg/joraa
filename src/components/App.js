@@ -12,7 +12,6 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [noResults, setNoResults] = useState(false);
   const [moreResults, setMoreResults] = useState(false);
-  const [firstRender, setFirstRender] = useState(true);
   const [filterData, setFilterData] = useState({
     fromDate: date.toISOString().substring(0, 10),
     toDate: new Date().toISOString().substring(0, 10),
@@ -24,23 +23,23 @@ function App() {
   const [page, setPage] = useState(1);
   const pageSize = 500;
 
-  // filter page when filterData or page changes
+  // Filter page when filterData or page changes
   useEffect(() => {
-    const filterPage = async () => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    (async () => {
       if (page === 1) {
         setAtos([]);
         setNoResults(false);
         setMoreResults(false);
-        setFirstRender(false);
       }
 
       setIsLoading(true);
 
-      // const abortController = useRef(new AbortController());
-      // const signal = abortController.current.signal;
-
       const response = await fetch(
-        buildSearchQueryUrl(filterData, page, pageSize)
+        buildSearchQueryUrl(filterData, page, pageSize),
+        { signal }
       );
       if (!response.ok) {
         console.log(
@@ -74,7 +73,7 @@ function App() {
         }
       } else {
         for (let atoMeta of data.list) {
-          const res = await fetch(buildAtoFetchUrl(atoMeta.id));
+          const res = await fetch(buildAtoFetchUrl(atoMeta.id), { signal });
           if (!res.ok) {
             console.log("Error fetching data: ", res.status, res.statusText);
             continue;
@@ -90,7 +89,7 @@ function App() {
               .map((s) => Number(s.split(",")[0].replaceAll(".", "")))
               .reduce((a, b) => Math.max(a, b), -Infinity);
 
-            if (max > filterData.montante) {
+            if (max >= filterData.montante) {
               setAtos((prevAtos) => [
                 ...prevAtos,
                 {
@@ -109,18 +108,22 @@ function App() {
           }
         }
       }
-
       setIsLoading(false);
 
       if (data.resultSize > page * pageSize) {
-        // page.current++;
         setMoreResults(true);
       } else {
         setMoreResults(false);
       }
-    };
+    })().catch((err) => {
+      if (err.name === "AbortError") {
+        console.log("Aborted");
+      } else {
+        console.log(err);
+      }
+    });
 
-    filterPage();
+    return () => controller?.abort();
   }, [filterData, page]);
 
   const filter = (formData) => {
@@ -139,13 +142,9 @@ function App() {
       </header>
 
       <main className="main">
-        <Filter
-          isLoading={isLoading} // TODO: remove
-          filterData={filterData}
-          filter={filter}
-        />
+        <Filter filterData={filterData} filter={filter} />
 
-        {!firstRender && (
+        {
           <div className="results">
             {atos.map((ato, index) => (
               <Ato key={ato.id + index} data={ato} />
@@ -169,7 +168,7 @@ function App() {
               </button>
             )}
           </div>
-        )}
+        }
       </main>
     </div>
   );
