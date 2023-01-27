@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { seriesUrl, entidadesUrl, tiposUrl } from "../api/api";
+import { VscSearch } from "react-icons/vsc";
 
 function Filter({ filterData, filter }) {
   const [formData, setFormData] = useState({ ...filterData });
@@ -156,6 +157,21 @@ function Filter({ filterData, filter }) {
             </option>
           ))}
         </select>
+      </div>
+
+      <div className="filter__input-container">
+        <label
+          className={"filter__label" && formData.searchText && "filled"}
+          htmlFor="searchText"
+        >
+          Pesquisa <VscSearch fontSize="0.75rem" />
+        </label>
+        <input
+          type="text"
+          onChange={handleChange}
+          name="searchText"
+          value={formData.searchText}
+        />
       </div>
 
       <div className="filter__input-container">

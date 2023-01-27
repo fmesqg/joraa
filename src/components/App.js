@@ -20,6 +20,7 @@ function App() {
     entidade: "",
     tipo: "",
     ordenacao: 1,
+    searchText: "",
   });
   const [page, setPage] = useState(1);
   const pageSize = 500;

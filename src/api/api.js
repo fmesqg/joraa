@@ -11,7 +11,7 @@ export const entidadesUrl = baseUrl + entidadesEndpoint;
 export const tiposUrl = baseUrl + tiposEndpoint;
 
 export function buildSearchQueryUrl(formData, page, pageSize) {
-  const query = `searchText=&estados=6&page=${page}&pageSize=${pageSize}&importados&fromDate=${formData.fromDate}&toDate=${formData.toDate}&serie=${formData.serie}&tipoAto=${formData.tipo}&entidade=${formData.entidade}&ordenacao=${formData.ordenacao}`;
+  const query = `searchText=${formData.searchText}&estados=6&page=${page}&pageSize=${pageSize}&importados&fromDate=${formData.fromDate}&toDate=${formData.toDate}&serie=${formData.serie}&tipoAto=${formData.tipo}&entidade=${formData.entidade}&ordenacao=${formData.ordenacao}`;
   return baseUrl + searchEndpoint + query;
 }
 
