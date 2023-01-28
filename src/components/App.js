@@ -82,8 +82,18 @@ function App() {
           }
           const ato = await res.json();
 
-          const matches = ato.considerandos.match(
-            /(\d{1,3})(\.\d{1,3})?(\.\d{1,3})?(\.\d{1,3})?(,\d{2})€/g
+          // does not match values starting with '€' (e.g. €1.000,00)
+          const regex = new RegExp(
+            /(\d{1,3})(\.\d{1,3})?(\.\d{1,3})?(\.\d{1,3})?(,\d{2})(\s)?€/g
+          );
+
+          const matches = ((x) => (x ? x : []))(
+            ato.considerandos?.match(regex)
+          ).concat(
+            ato.normativos?.reduce((acc, curr) => {
+              let m = curr.normativo?.match(regex);
+              return m ? acc.concat(m) : acc;
+            }, [])
           );
 
           if (matches) {
