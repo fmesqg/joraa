@@ -83,7 +83,7 @@ function App() {
           const ato = await res.json();
 
           const matches = ato.considerandos.match(
-            /(\d{0,3})?(\.)?(\d{0,3})?(\.)?(\d{0,3})?(\.)?(\d{1,3})(,\d{2})€/g
+            /(\d{1,3})(\.\d{1,3})?(\.\d{1,3})?(\.\d{1,3})?(,\d{2})€/g
           );
 
           if (matches) {
